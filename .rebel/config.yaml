@@ -1,0 +1,290 @@
+# Rebel Configuration - 叛逆者机制规则引擎配置
+# Version: 1.0.0
+
+rebel:
+  version: "1.0.0"
+  name: "叛逆者 (The Rebel)"
+  enabled: true
+
+# ============================================================
+# 评估维度配置 (Assessment Dimensions)
+# ============================================================
+assessment:
+  dimensions:
+    architecture_health:
+      weight: 0.30
+      display_name: "架构健康度"
+      description: "目标偏移度、模块职责清晰度、技术债务趋势、依赖复杂度"
+      indicators:
+        - name: "goal_drift"
+          description: "核心目标偏移检测"
+          weight: 0.35
+          check_method: "compare_recent_tasks_against_core_goals"
+        - name: "module_cohesion"
+          description: "模块职责内聚性"
+          weight: 0.25
+          check_method: "analyze_module_boundaries_and_dependencies"
+        - name: "tech_debt_trend"
+          description: "技术债务趋势"
+          weight: 0.20
+          check_method: "track_todo_fixme_and_known_issues"
+        - name: "dependency_complexity"
+          description: "依赖复杂度"
+          weight: 0.20
+          check_method: "count_and_analyze_dependencies"
+
+    code_quality:
+      weight: 0.25
+      display_name: "代码质量"
+      description: "命名一致性、重复代码检测、测试覆盖缺口、异常处理完备性"
+      indicators:
+        - name: "naming_consistency"
+          description: "命名规范一致性"
+          weight: 0.20
+          check_method: "scan_naming_patterns"
+        - name: "code_duplication"
+          description: "重复代码检测"
+          weight: 0.25
+          check_method: "detect_similar_code_blocks"
+        - name: "test_coverage_gap"
+          description: "测试覆盖缺口"
+          weight: 0.30
+          check_method: "analyze_test_coverage_and_gaps"
+        - name: "error_handling"
+          description: "异常处理完备性"
+          weight: 0.25
+          check_method: "check_error_handling_patterns"
+
+    process_compliance:
+      weight: 0.20
+      display_name: "流程规范性"
+      description: "编码规范遵守率、记忆准确性、计划执行偏差、提交规范"
+      indicators:
+        - name: "coding_standards"
+          description: "编码规范遵守率"
+          weight: 0.30
+          check_method: "verify_against_project_style_guide"
+        - name: "memory_accuracy"
+          description: "记忆准确性"
+          weight: 0.25
+          check_method: "cross_reference_memories_with_code"
+        - name: "plan_deviation"
+          description: "计划执行偏差"
+          weight: 0.25
+          check_method: "compare_implementation_with_original_plan"
+        - name: "commit_hygiene"
+          description: "提交规范"
+          weight: 0.20
+          check_method: "analyze_commit_message_patterns"
+
+    non_functional:
+      weight: 0.25
+      display_name: "非功能性需求"
+      description: "性能瓶颈、安全隐患、可维护性风险、可扩展性限制"
+      indicators:
+        - name: "performance_risk"
+          description: "性能瓶颈风险"
+          weight: 0.25
+          check_method: "detect_performance_anti_patterns"
+        - name: "security_vulnerability"
+          description: "安全隐患"
+          weight: 0.30
+          check_method: "scan_common_security_issues"
+        - name: "maintainability"
+          description: "可维护性风险"
+          weight: 0.25
+          check_method: "assess_code_complexity_and_coupling"
+        - name: "scalability"
+          description: "可扩展性限制"
+          weight: 0.20
+          check_method: "identify_scaling_bottlenecks"
+
+# ============================================================
+# 危机等级配置 (Crisis Level Configuration)
+# ============================================================
+crisis_levels:
+  - level: 0
+    name: "peace"
+    display_name: "和平期"
+    color: "green"
+    description: "一切正常，继续监控"
+    action: "continue_monitoring"
+
+  - level: 1
+    name: "watch"
+    display_name: "观察期"
+    color: "blue"
+    description: "发现苗头，记录并观察"
+    action: "log_and_observe"
+
+  - level: 2
+    name: "warning"
+    display_name: "警告期"
+    color: "yellow"
+    description: "问题积累，生成审视报告"
+    action: "generate_audit_report"
+
+  - level: 3
+    name: "crisis"
+    display_name: "危机期"
+    color: "orange"
+    description: "严重问题，生成政变提案"
+    action: "generate_coup_proposal"
+
+  - level: 4
+    name: "emergency"
+    display_name: "紧急期"
+    color: "red"
+    description: "即时阻断，紧急政变提案"
+    action: "immediate_coup_proposal"
+
+# 等级晋升规则
+escalation_rules:
+  - condition: "single_dimension_minor_issue"
+    from: 0
+    to: 1
+    description: "单一维度的小问题：L0 → L1"
+  - condition: "same_dimension_same_issue_2x"
+    from: 1
+    to: 2
+    description: "同一维度连续出现2次相同问题：L1 → L2"
+  - condition: "cross_dimension_l2_simultaneous"
+    from: 2
+    to: 3
+    description: "跨维度同时出现L2级问题：触发L3"
+  - condition: "security_vulnerability_or_data_loss"
+    from: "any"
+    to: 4
+    description: "安全漏洞、数据丢失风险、核心功能缺陷：直接L4"
+
+# 等级衰减规则
+de_escalation_rules:
+  - condition: "3_consecutive_clean_audits"
+    action: "reduce_one_level"
+    description: "连续3次审视无新问题：自动降一级"
+  - condition: "user_acknowledged_risk"
+    action: "reduce_one_level_for_specific_issue"
+    description: "用户主动确认已知风险：对应问题降一级"
+
+# ============================================================
+# 采样策略配置 (Sampling Strategy)
+# ============================================================
+sampling:
+  micro_audit:
+    frequency: "every_task"
+    enabled: true
+    checks:
+      - "goal_consistency"
+      - "naming_convention"
+      - "import_hygiene"
+    max_duration_seconds: 2
+    silent: true  # 仅异常时输出
+
+  standard_audit:
+    base_frequency: 5  # 每5次任务
+    adaptive: true
+    adaptive_rules:
+      - if: "last_audit_found_issues"
+        action: "reduce_interval_by_1"
+      - if: "3_consecutive_clean"
+        action: "increase_interval_by_2"
+    min_interval: 3
+    max_interval: 10
+
+  deep_audit:
+    base_frequency: 20
+    triggers:
+      - "crisis_level_gte_3"
+      - "manual_rebel_deep"
+      - "7_days_since_last_deep_audit"
+
+# 即时触发条件
+immediate_triggers:
+  - "manual_rebel_command"
+  - "security_vulnerability_detected"
+  - "excessive_new_dependencies_in_single_task"
+  - "core_goal_memory_modified"
+  - "agent_user_direction_conflict"
+
+# ============================================================
+# 政变配置 (Coup Configuration)
+# ============================================================
+coup:
+  permission_model: "proposal_approval"  # 提案审批制
+  proposal_retention: "all"  # 保留所有提案记录
+
+  types:
+    - name: "goal_realignment"
+      display_name: "目标校准"
+      description: "修正偏移的项目/模块目标"
+      trigger: "goal_drift_detected"
+      scope: ["memory", "plan"]
+
+    - name: "memory_repair"
+      display_name: "记忆修复"
+      description: "清理过时/矛盾/错误的记忆"
+      trigger: "memory_inconsistency_detected"
+      scope: ["knowledge_base"]
+
+    - name: "architecture_adjustment"
+      display_name: "架构调整"
+      description: "重构模块边界和依赖关系"
+      trigger: "architecture_decay_detected"
+      scope: ["code", "config"]
+
+    - name: "process_correction"
+      display_name: "流程纠偏"
+      description: "恢复被忽视的编码规范和流程"
+      trigger: "compliance_rate_decline"
+      scope: ["rules", "config"]
+
+    - name: "tech_debt_clearance"
+      display_name: "技术债务清算"
+      description: "集中处理积累的技术债务"
+      trigger: "debt_threshold_exceeded"
+      scope: ["code", "tests"]
+
+  # 提案审批流程
+  approval_flow:
+    presentation: "逐项展示每个提案的问题诊断、方案和调整建议"
+    options:
+      - "approve_all"       # 全部批准
+      - "approve_selective" # 选择性批准
+      - "reject_all"        # 全部否决
+      - "modify_and_approve" # 修改后批准
+    post_execution:
+      - "verify_changes"
+      - "update_health_scores"
+      - "record_effectiveness"
+
+# ============================================================
+# 健康趋势追踪 (Health Trend Tracking)
+# ============================================================
+health_tracking:
+  metrics:
+    - name: "goal_alignment_score"
+      description: "目标对齐度"
+      range: [0, 100]
+      healthy_threshold: 80
+      warning_threshold: 60
+
+    - name: "architecture_health"
+      description: "架构健康度"
+      range: [0, 100]
+      healthy_threshold: 75
+      warning_threshold: 55
+
+    - name: "code_quality_score"
+      description: "代码质量"
+      range: [0, 100]
+      healthy_threshold: 70
+      warning_threshold: 50
+
+    - name: "process_compliance"
+      description: "流程合规率"
+      range: [0, 100]
+      healthy_threshold: 75
+      warning_threshold: 55
+
+  tracking_window: "rolling_30_tasks"
+  history_retention: "last_50_audits"

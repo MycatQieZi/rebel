@@ -1,0 +1,10 @@
+# Rebel - 叛逆者机制项目
+
+# 保留配置文件，追踪变更
+!.rebel/config.yaml
+
+# 数据文件不追踪（运行时生成）
+.rebel/state.json
+.rebel/health-trends.json
+.rebel/audit-history/
+.rebel/coup-history/
