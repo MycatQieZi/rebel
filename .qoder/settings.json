@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".qoder/hooks/rebel-stop-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

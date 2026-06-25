@@ -2,9 +2,59 @@
 # Version: 1.0.0
 
 rebel:
-  version: "1.0.0"
+  version: "2.0.0"
   name: "叛逆者 (The Rebel)"
   enabled: true
+
+# ============================================================
+# 模块化配置 (Modular Architecture) - v2.0
+# ============================================================
+modular:
+  enabled: true
+  description: "按功能模块独立评估，支持模块级政变和级联审视"
+
+  # 模块发现方式
+  discovery:
+    method: "auto_from_readme"  # 从 README 功能拆分解中自动识别
+    sources:
+      - "README.md"             # 主来源
+      - "AGENTS.md"             # 项目目标补充
+    auto_generate_readme: true  # 不存在 README 时自动生成
+    output: ".rebel/modules.yaml"  # 模块声明输出路径
+
+  # 模块评分体系
+  scoring:
+    base_dimensions_inherited: true  # 继承全局四维评估
+    base_weight_ratio: 0.70          # 基础维度占模块总分的 70%
+    extra_weight_ratio: 0.30         # 专属维度占模块总分的 30%
+    extra_dimensions_limit: 3        # 每个模块最多追加3个专属维度
+
+  # 模块级政变
+  coup:
+    enabled: true
+    mode: "cascade"              # 级联式：触发政变时自动审视依赖模块
+    cascade_rules:
+      - direction: "consumers"   # 依赖本模块的模块（下游）
+        impact: "auto_assess"
+        depth: 1                 # 级联深度：仅直接依赖
+      - direction: "providers"   # 本模块依赖的模块（上游）
+        impact: "auto_assess"
+        depth: 1
+    module_crisis_threshold: 40  # 模块维度低于此分数触发模块政变
+
+  # 评分聚合
+  aggregation:
+    method: "dual_indicator"
+    primary:
+      type: "weighted_average"   # 加权平均
+      formula: "Σ(module_score × module_weight) / Σweight"
+    secondary:
+      type: "bottleneck"         # 木桶短板
+      formula: "min(all_module_scores)"
+    report_both: true
+
+  # 模块权重默认策略
+  weight_strategy: "equal"       # equal(均分) / manual(手动指定) / auto(按模块规模和复杂度自动)
 
 # ============================================================
 # 评估维度配置 (Assessment Dimensions)
@@ -256,6 +306,68 @@ coup:
       - "verify_changes"
       - "update_health_scores"
       - "record_effectiveness"
+
+# ============================================================
+# 改朝换代配置 (Rebuild Configuration)
+# ============================================================
+rebuild:
+  enabled: true
+  description: "全项目重构评估 — 从目标出发审核技术选型和功能累积，生成完整的重构路线图"
+  command: "/rebel --rebuild"
+  trigger: "manual_only"  # 仅手动触发，不受危机等级限制
+
+  # 两阶段流程
+  phases:
+    phase_1:
+      name: "战略重构提案"
+      description: "目标重塑 + 技术审计 + 功能审计 + 路线图"
+      output: "rebuild_proposal (YAML)"
+      requires_approval: true
+      approval_mode: "per_section"  # 逐项审批或全部批准
+
+    phase_2:
+      name: "战术实施计划"
+      description: "代码级变更清单、接口迁移、数据迁移、测试策略"
+      prerequisite: "phase_1_approved"
+      output: "tactical_implementation_plan"
+
+  # 技术选型审计维度
+  tech_audit_dimensions:
+    - category: "language"
+      description: "编程语言"
+      weight: 0.25
+    - category: "framework"
+      description: "核心框架"
+      weight: 0.25
+    - category: "database"
+      description: "数据库与存储"
+      weight: 0.20
+    - category: "infrastructure"
+      description: "基础设施（部署、CI/CD、监控）"
+      weight: 0.15
+    - category: "dependencies"
+      description: "关键依赖库"
+      weight: 0.15
+
+  # 功能审计分类
+  feature_classification:
+    - type: "keep"
+      label: "保留"
+      description: "核心功能，实现良好，继续维护"
+    - type: "refactor"
+      label: "重构"
+      description: "功能正确但实现欠佳，需要重写"
+    - type: "deprecate"
+      label: "废弃"
+      description: "已无调用方或已被替代，应删除"
+    - type: "merge"
+      label: "合并"
+      description: "与其它功能重叠，需要合并为统一模块"
+
+  # 改朝换代执行后
+  post_rebuild:
+    required_action: "run_standard_audit"
+    description: "执行 /rebel 标准审视，建立新的项目健康基线"
 
 # ============================================================
 # 健康趋势追踪 (Health Trend Tracking)
