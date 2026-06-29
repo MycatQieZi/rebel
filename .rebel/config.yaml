@@ -2,8 +2,8 @@
 # Version: 1.0.0
 
 rebel:
-  version: "2.0.0"
-  name: "叛逆者 (The Rebel)"
+  version: "2.1.0"
+  name: "叛逆者 (The Rebel) + 乌鸦 (The Crow)"
   enabled: true
 
 # ============================================================
@@ -55,6 +55,42 @@ modular:
 
   # 模块权重默认策略
   weight_strategy: "equal"       # equal(均分) / manual(手动指定) / auto(按模块规模和复杂度自动)
+
+  # 乌鸦悲观主义专属维度 (自动添加到每个模块)
+  pessimist:
+    enabled: true
+    dimension_name: "pessimist_risk"
+    dimension_label: "乌鸦风险评估"
+    description: "从最坏情况出发，评估模块的灾难抵抗力"
+    auto_attach: true              # 自动添加到所有模块
+    indicators:
+      - name: "assumption_invalidation"
+        label: "假设失效分析"
+        description: "识别并推翻模块内所有未经测试的乐观假设"
+        weight: 0.30
+      - name: "boundary_coverage"
+        label: "边界条件覆盖"
+        description: "检测极端输入、空值、溢出、并发条件下的行为"
+        weight: 0.25
+      - name: "cascade_impact"
+        label: "级联故障传导"
+        description: "模拟本模块故障对依赖方的影响链"
+        weight: 0.25
+      - name: "recovery_capability"
+        label: "恢复能力"
+        description: "从最坏故障中恢复的难度和时间"
+        weight: 0.20
+
+  # 全局级联灾难分析
+  global_cascade:
+    enabled: true
+    trigger: "multi_module_l3_plus"  # ≥2个模块同时 L3+ 时触发
+    min_modules_for_cascade: 2
+    analysis_depth:
+      - "identify_shared_dependencies"   # 找出共享依赖（如数据库、缓存）
+      - "simulate_cascading_failure"     # 模拟级联故障传播链
+      - "estimate_blast_radius"          # 估算爆炸半径
+      - "recommend_defense_layers"       # 建议防御分层
 
 # ============================================================
 # 评估维度配置 (Assessment Dimensions)
